@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ismoilov Javohir | Frontend Developer</title>
+  <meta name="description" content="Ismoilov Javohir - Frontend Developer. Terminal-style portfolio." />
+  <meta name="theme-color" content="#09090b" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#09090b',
+            surface: '#111113',
+            border: '#1e1e22',
+            green: { accent: '#22c55e', dim: '#166534', glow: '#4ade80' },
+            text: { primary: '#fafafa', secondary: '#a1a1aa', muted: '#52525b' }
+          },
+          fontFamily: {
+            mono: ['Space Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: #09090b; color: #fafafa; font-family: 'Inter', sans-serif; }
+
+    ::selection { background: #22c55e; color: #09090b; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #09090b; }
+    ::-webkit-scrollbar-thumb { background: #1e1e22; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+
+    .dot-grid {
+      background-image: radial-gradient(circle, #1e1e22 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .terminal-cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: #22c55e;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .typing-text {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: none;
+      animation: typing 2.5s steps(35, end) forwards;
+      width: 0;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    .glow-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #22c55e, transparent);
+      opacity: 0.4;
+    }
+
+    .card-terminal {
+      background: #111113;
+      border: 1px solid #1e1e22;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-terminal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #22c55e, transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .card-terminal:hover {
+      border-color: #166534;
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.05);
+    }
+    .card-terminal:hover::before { opacity: 1; }
+
+    .skill-bar-bg {
+      background: #1e1e22;
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .skill-bar-fill {
+      height: 100%;
+      background: #22c55e;
+      border-radius: 4px;
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+    }
+
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .nav-link {
+      color: #a1a1aa;
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+    .nav-link:hover { color: #22c55e; }
+    .nav-link::before {
+      content: '>';
+      margin-right: 6px;
+      color: #52525b;
+      transition: color 0.2s ease;
+    }
+    .nav-link:hover::before { color: #22c55e; }
+
+    .project-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      padding: 3px 10px;
+      border: 1px solid #1e1e22;
+      border-radius: 4px;
+      color: #a1a1aa;
+      transition: all 0.2s ease;
+    }
+    .project-tag:hover {
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+
+    .stat-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #22c55e;
+      line-height: 1;
+    }
+
+    @media (max-width: 768px) {
+      .typing-text { animation: none; width: 100%; white-space: normal; }
+    }
+  </style>
+</head>
+<body class="dot-grid">
+
+  <!-- Scanline overlay -->
+  <div class="scanline"></div>
+
+  <!-- Navbar -->
+  <nav id="navbar" style="transition: all 0.3s ease; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+       class="fixed top-0 left-0 right-0 z-50 bg-bg/80 border-b border-border">
+    <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+      <a href="#" class="font-mono text-green-accent font-bold text-sm tracking-wider">
+        <span class="text-text-muted">~/</span>javohir
+      </a>
+
+      <!-- Desktop nav -->
+      <div class="hidden md:flex items-center gap-6">
+        <a href="#about" class="nav-link">about</a>
+        <a href="#skills" class="nav-link">skills</a>
+        <a href="#projects" class="nav-link">projects</a>
+        <a href="#contact" class="nav-link">contact</a>
+      </div>
+
+      <!-- Mobile menu btn -->
+      <button id="menuBtn" class="md:hidden text-text-secondary hover:text-green-accent transition-colors" aria-label="Menu">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="19" y2="6" /><line x1="3" y1="11" x2="19" y2="11" /><line x1="3" y1="16" x2="19" y2="16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-border bg-bg/95 px-6 py-4 flex flex-col gap-3">
+      <a href="#about" class="nav-link" onclick="closeMobile()">about</a>
+      <a href="#skills" class="nav-link" onclick="closeMobile()">skills</a>
+      <a href="#projects" class="nav-link" onclick="closeMobile()">projects</a>
+      <a href="#contact" class="nav-link" onclick="closeMobile()">contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="min-h-screen flex items-center relative px-6">
+    <div class="max-w-5xl mx-auto w-full pt-14">
+      <div class="fade-up">
+        <div class="font-mono text-green-accent text-sm mb-6 flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-green-accent animate-pulse"></span>
+          <span>system.init()</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary leading-tight tracking-tight mb-2">
+          Ismoilov
+        </h1>
+        <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight tracking-tight mb-8">
+          <span class="text-green-accent">Javohir</span><span class="text-text-muted">.</span>
+        </h1>
+
+        <div class="font-mono text-text-secondary text-sm sm:text-base mb-4 flex items-start">
+          <span class="text-text-muted mr-2 select-none hidden sm:inline">$</span>
+          <div>
+            <span class="typing-text inline-block">Frontend Developer | 11-sinf o'quvchisi</span>
+            <span class="terminal-cursor"></span>
+          </div>
+        </div>
+
+        <p class="text-text-muted text-sm sm:text-base max-w-lg leading-relaxed mb-10 font-mono">
+          // Alxorazmiy Avlodlari loyihasi bitiruvchisi.<br/>
+          // Zamonaviy web texnologiyalarni o'rganmoqda.
+        </p>
+
+        <div class="flex flex-wrap gap-3">
+          <a href="#projects"
+             class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-accent text-bg font-mono text-sm font-bold rounded hover:bg-green-glow transition-colors">
+            <span>Loyihalar</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 7h12M8 2l5 5-5 5"/>
+            </svg>
+          </a>
+          <a href="#contact"
+             class="inline-flex items-center gap-2 px-5 py-2.5 border border-border text-text-secondary font-mono text-sm rounded hover:border-green-accent hover:text-green-accent transition-all">
+            <span>Bog'lanish</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+      <span class="font-mono text-text-muted text-xs">scroll</span>
+      <div class="w-px h-8 bg-gradient-to-b from-green-accent/50 to-transparent animate-pulse"></div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="fade-up">
+        <div class="flex items-center gap-4 mb-12">
+          <span class="font-mono text-green-accent text-sm">01.</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-text-primary">Men haqimda</h2>
+          <div class="glow-line flex-1"></div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2 fade-up">
+          <div class="card-terminal p-6 sm:p-8">
+            <div class="font-mono text-xs text-text-muted mb-4 flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
+              <span class="ml-2">about.txt</span>
+            </div>
+            <div class="font-mono text-sm text-text-secondary leading-7 space-y-4">
+              <p>
+                <span class="text-text-muted select-none">1 </span>
+                Men <span class="text-green-accent">Ismoilov Javohir</span>man.
+              </p>
+              <p>
+                <span class="text-text-muted select-none">2 </span>
+                11-sinf o'quvchisiman va <span class="text-green-accent">Alxorazmiy Avlodlari</span>
+              </p>
+              <p>
+                <span class="text-text-muted select-none">3 </span>
+                loyihasida dasturlash bo'yicha ta'lim oldim.
+              </p>
+              <p>
+                <span class="text-text-muted select-none">4 </span>
+                Hozirda zamonaviy web texnologiyalarni
+              </p>
+              <p>
+                <span class="text-text-muted select-none">5 </span>
+                o'rganib, <span class="text-green-accent">frontend developer</span> sifatida
+              </p>
+              <p>
+                <span class="text-text-muted select-none">6 </span>
+                o'z ko'nikmalarimni oshirmoqdaman.
+              </p>
+              <p>
+                <span class="text-text-muted select-none">7 </span>
+                Maqsadim — professional dasturchi bo'lish
+              </p>
+              <p>
+                <span class="text-text-muted select-none">8 </span>
+                va foydali loyihalar yaratish.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-4 fade-up">
+          <div class="card-terminal p-5 text-center">
+            <div class="stat-number">6+</div>
+            <div class="font-mono text-xs text-text-muted mt-1">texnologiya</div>
+          </div>
+          <div class="card-terminal p-5 text-center">
+            <div class="stat-number">5+</div>
+            <div class="font-mono text-xs text-text-muted mt-1">loyihalar</div>
+          </div>
+          <div class="card-terminal p-5 text-center">
+            <div class="stat-number">1+</div>
+            <div class="font-mono text-xs text-text-muted mt-1">yil tajriba</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills" class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="fade-up">
+        <div class="flex items-center gap-4 mb-12">
+          <span class="font-mono text-green-accent text-sm">02.</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-text-primary">Ko'nikmalar</h2>
+          <div class="glow-line flex-1"></div>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <!-- HTML -->
+        <div class="card-terminal p-5 fade-up skill-card" data-level="90">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-green-accent/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+                </svg>
+              </div>
+              <span class="font-mono text-sm text-text-primary font-bold">HTML</span>
+            </div>
+            <span class="font-mono text-xs text-green-accent">90%</span>
+          </div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+        </div>
+
+        <!-- CSS -->
+        <div class="card-terminal p-5 fade-up skill-card" data-level="85">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-green-accent/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 2v20l8-4 8 4V2z"/>
+                </svg>
+              </div>
+              <span class="font-mono text-sm text-text-primary font-bold">CSS</span>
+            </div>
+            <span class="font-mono text-xs text-green-accent">85%</span>
+          </div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+        </div>
+
+        <!-- JavaScript -->
+        <div class="card-terminal p-5 fade-up skill-card" data-level="75">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-green-accent/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7"/><path d="M15 17c0-2-3-2-3-4s3-2 3-4"/>
+                </svg>
+              </div>
+              <span class="font-mono text-sm text-text-primary font-bold">JavaScript</span>
+            </div>
+            <span class="font-mono text-xs text-green-accent">75%</span>
+          </div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+        </div>
+
+        <!-- Tailwind CSS -->
+        <div class="card-terminal p-5 fade-up skill-card" data-level="80">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-green-accent/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <span class="font-mono text-sm text-text-primary font-bold">Tailwind CSS</span>
+            </div>
+            <span class="font-mono text-xs text-green-accent">80%</span>
+          </div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+        </div>
+
+        <!-- Git -->
+        <div class="card-terminal p-5 fade-up skill-card" data-level="70">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-green-accent/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/>
+                  <path d="M6 9v12"/>
+                </svg>
+              </div>
+              <span class="font-mono text-sm text-text-primary font-bold">Git</span>
+            </div>
+            <span class="font-mono text-xs text-green-accent">70%</span>
+          </div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+        </div>
+
+        <!-- GitHub -->
+        <div class="card-terminal p-5 fade-up skill-card" data-level="75">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-green-accent/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/>
+                  <path d="M9 18c-4.51 2-5-2-7-2"/>
+                </svg>
+              </div>
+              <span class="font-mono text-sm text-text-primary font-bold">GitHub</span>
+            </div>
+            <span class="font-mono text-xs text-green-accent">75%</span>
+          </div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="fade-up">
+        <div class="flex items-center gap-4 mb-12">
+          <span class="font-mono text-green-accent text-sm">03.</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-text-primary">Loyihalar</h2>
+          <div class="glow-line flex-1"></div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <!-- Project 1 -->
+        <div class="card-terminal p-6 fade-up group">
+          <div class="flex items-center justify-between mb-4">
+            <div class="font-mono text-xs text-text-muted flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-accent/80"></span>
+              featured
+            </div>
+            <div class="flex gap-3">
+              <a href="#" class="text-text-muted hover:text-green-accent transition-colors" aria-label="GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              </a>
+              <a href="#" class="text-text-muted hover:text-green-accent transition-colors" aria-label="External">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-text-primary mb-2 group-hover:text-green-accent transition-colors">Portfolio Website</h3>
+          <p class="text-sm text-text-muted leading-relaxed mb-5 font-mono">
+            Shaxsiy portfolio veb-sayti. Zamonaviy dizayn va responsive layout bilan yaratilgan.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span class="project-tag">HTML</span>
+            <span class="project-tag">CSS</span>
+            <span class="project-tag">JavaScript</span>
+            <span class="project-tag">Tailwind</span>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="card-terminal p-6 fade-up group">
+          <div class="flex items-center justify-between mb-4">
+            <div class="font-mono text-xs text-text-muted flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-accent/80"></span>
+              featured
+            </div>
+            <div class="flex gap-3">
+              <a href="#" class="text-text-muted hover:text-green-accent transition-colors" aria-label="GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              </a>
+              <a href="#" class="text-text-muted hover:text-green-accent transition-colors" aria-label="External">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-text-primary mb-2 group-hover:text-green-accent transition-colors">Weather App</h3>
+          <p class="text-sm text-text-muted leading-relaxed mb-5 font-mono">
+            Ob-havo ma'lumotlarini ko'rsatuvchi ilova. API integratsiyasi va dinamik interfeys.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span class="project-tag">JavaScript</span>
+            <span class="project-tag">API</span>
+            <span class="project-tag">CSS</span>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="card-terminal p-6 fade-up group">
+          <div class="flex items-center justify-between mb-4">
+            <div class="font-mono text-xs text-text-muted flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-text-muted"></span>
+              project
+            </div>
+            <div class="flex gap-3">
+              <a href="#" class="text-text-muted hover:text-green-accent transition-colors" aria-label="GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-text-primary mb-2 group-hover:text-green-accent transition-colors">Landing Page</h3>
+          <p class="text-sm text-text-muted leading-relaxed mb-5 font-mono">
+            Kompaniya uchun zamonaviy landing sahifa. Tailwind CSS yordamida responsive dizayn.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span class="project-tag">HTML</span>
+            <span class="project-tag">Tailwind</span>
+            <span class="project-tag">JS</span>
+          </div>
+        </div>
+
+        <!-- Project 4 -->
+        <div class="card-terminal p-6 fade-up group">
+          <div class="flex items-center justify-between mb-4">
+            <div class="font-mono text-xs text-text-muted flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-text-muted"></span>
+              project
+            </div>
+            <div class="flex gap-3">
+              <a href="#" class="text-text-muted hover:text-green-accent transition-colors" aria-label="GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-text-primary mb-2 group-hover:text-green-accent transition-colors">Quiz App</h3>
+          <p class="text-sm text-text-muted leading-relaxed mb-5 font-mono">
+            Interaktiv test ilovasi. Turli mavzularda bilimlarni sinash imkoniyati.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span class="project-tag">HTML</span>
+            <span class="project-tag">CSS</span>
+            <span class="project-tag">JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-24 px-6">
+    <div class="max-w-xl mx-auto text-center">
+      <div class="fade-up">
+        <span class="font-mono text-green-accent text-sm block mb-4">04. Keyingi qadam</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-text-primary mb-6">Bog'lanish</h2>
+        <div class="card-terminal p-6 sm:p-8 text-left mb-8">
+          <div class="font-mono text-xs text-text-muted mb-4 flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
+            <span class="ml-2">contact.sh</span>
+          </div>
+          <div class="font-mono text-sm text-text-secondary leading-8">
+            <p><span class="text-text-muted select-none">$ </span><span class="text-green-accent">echo</span> "Salom! Men hamkorlik va"</p>
+            <p><span class="text-text-muted select-none">$ </span><span class="text-green-accent">echo</span> "yangi loyihalar uchun ochiqman."</p>
+            <p><span class="text-text-muted select-none">$ </span><span class="text-green-accent">echo</span> "Menga yozing!"</p>
+            <p class="mt-2 text-text-muted">---</p>
+            <p><span class="text-text-muted select-none">$ </span><span class="text-green-accent">cat</span> email.txt</p>
+            <p class="text-green-accent ml-4">javohir@example.com</p>
+          </div>
+        </div>
+        <a href="mailto:javohir@example.com"
+           class="inline-flex items-center gap-2 px-7 py-3 bg-transparent border-2 border-green-accent text-green-accent font-mono text-sm font-bold rounded hover:bg-green-accent/10 transition-colors">
+          <span>Xabar yuborish</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" transform="scale(0.65) translate(2,2)"/>
+            <polyline points="1.5 4 8 9.5 14.5 4" transform="scale(0.65) translate(4.5,3)"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 px-6 border-t border-border">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="font-mono text-xs text-text-muted">
+        <span class="text-green-accent">&gt;</span> Ismoilov Javohir &copy; 2026
+      </div>
+      <div class="flex items-center gap-5">
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="text-text-muted hover:text-green-accent transition-colors" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        </a>
+        <a href="https://t.me/" target="_blank" rel="noopener noreferrer" class="text-text-muted hover:text-green-accent transition-colors" aria-label="Telegram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" class="text-text-muted hover:text-green-accent transition-colors" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+      </div>
+      <div class="font-mono text-xs text-text-muted">
+        <span class="text-green-accent">built_with</span>: html + tailwind + js
+      </div>
+    </div>
+  </footer>
+
+  <!-- Side elements (desktop only) -->
+  <div class="hidden lg:flex fixed left-8 bottom-0 flex-col items-center gap-5 z-40">
+    <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="text-text-muted hover:text-green-accent hover:-translate-y-1 transition-all" aria-label="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+    </a>
+    <a href="https://t.me/" target="_blank" rel="noopener noreferrer" class="text-text-muted hover:text-green-accent hover:-translate-y-1 transition-all" aria-label="Telegram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+    </a>
+    <div class="w-px h-24 bg-border"></div>
+  </div>
+
+  <div class="hidden lg:flex fixed right-8 bottom-0 flex-col items-center gap-5 z-40">
+    <a href="mailto:javohir@example.com" class="font-mono text-xs text-text-muted hover:text-green-accent transition-colors" style="writing-mode: vertical-rl;">
+      javohir@example.com
+    </a>
+    <div class="w-px h-24 bg-border"></div>
+  </div>
+
+  <script>
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    function closeMobile() {
+      mobileMenu.classList.add('hidden');
+    }
+
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+
+          // Animate skill bars
+          if (entry.target.classList.contains('skill-card')) {
+            const level = entry.target.dataset.level;
+            const bar = entry.target.querySelector('.skill-bar-fill');
+            if (bar) {
+              setTimeout(() => {
+                bar.style.width = level + '%';
+              }, 200);
+            }
+          }
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+    // Navbar hide/show on scroll
+    let lastScroll = 0;
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      const current = window.scrollY;
+      if (current > lastScroll && current > 80) {
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        navbar.style.transform = 'translateY(0)';
+      }
+      lastScroll = current;
+    });
+  </script>
+</body>
+</html>
